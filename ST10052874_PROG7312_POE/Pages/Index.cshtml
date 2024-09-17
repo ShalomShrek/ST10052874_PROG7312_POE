@@ -1,0 +1,37 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Main Menu";
+}
+<div class="text-center">
+    <h2 class="display">Main Menu</h2>
+</div>
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-4">
+                <div class="card-header text-center">
+                    <h3>Select an Option</h3>
+                </div>
+                <!-- Button to navigate to the report issues page -->
+                <div class="card-body">
+                    <a asp-page="/Privacy" class="btn btn-primary btn-block mb-3">
+                        Report Issues
+                    </a>
+                    <h2></h2>
+                    <!-- Button to navigate to the local events and announcements page (Currently disabled) -->
+                    <button class="btn btn-secondary btn-block mb-3" disabled>
+                        Local Events and Announcements (Coming Soon)
+                    </button>
+                    <h2></h2>
+                    <!-- Button to navigate to the local Service Request Status page (Currently disabled) -->
+                    <button class="btn btn-secondary btn-block" disabled>
+                        Service Request Status (Coming Soon)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

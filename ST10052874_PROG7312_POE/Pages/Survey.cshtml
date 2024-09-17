@@ -1,0 +1,60 @@
+﻿@page
+@model ST10052874_PROG7312_POE.Pages.SurveyModel
+@{
+    ViewData["Title"] = "User feedback on application";
+ }
+<h1>@ViewData["Title"]</h1>
+<form method="post" enctype="multipart/form-data">
+    <!-- Listbox displaying the reasons for user to take the survey -->
+    <div class="form-group">
+        <label for="SurveyReason">Reason for Survey:</label>
+        <select class="form-control" id="SurveyReason" name="SurveyReason" asp-for="SurveyReason" required>
+            <option value="">Select Reason</option>
+            <option value="Thoughts on the application">Thoughts on the application</option>
+            <option value="Reporting a bug">Reporting a bug</option>
+            <option value="Potential new features / improvements">Potential new features / improvements</option>
+            <option value="Other">Other</option>
+        </select>
+        <span asp-validation-for="SurveyReason" class="text-danger"></span>
+    </div>
+    <!-- User explains their issue/idea -->
+    <div class="form-group">
+        <label for="Information">Provide information for your survey:</label>
+        <textarea class="form-control" id="Information" name="Information" rows="5" placeholder="Describe your issue / recommendation with the application in detail" asp-for="Information" required></textarea>
+        <span asp-validation-for="Information" class="text-danger"></span>
+    </div>
+    <!--Button to add survey to the list -->
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+<h2>Submitted Surveys</h2>
+<!-- Displays all surveys added to list -->
+@if (Model.Surveys != null && Model.Surveys.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Reason</th>
+                <th>Information</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var issue in Model.Surveys)
+            {
+                <tr>
+                    <td>@issue.surveyReason</td>
+                    <td>@issue.information</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No surveys have been submitted yet.</p>
+}
+
+<a asp-page="/Index" class="btn btn-primary btn-block mb-3">
+    Return to Main Menu
+</a>
