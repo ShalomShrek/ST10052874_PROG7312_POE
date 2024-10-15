@@ -1,0 +1,90 @@
+﻿@page
+@model LocalEventsModel
+@{
+    ViewData["Title"] = "Local Events and Announcements";
+}
+
+<h1>Local Events and Announcements</h1>
+
+<!-- Search Form -->
+<form method="post">
+    <div>
+        <label for="searchTerm">Search Events:</label>
+        <input type="text" id="searchTerm" name="searchTerm" value="@Model.ViewModel.SearchTerm" />
+    </div>
+
+    <div>
+        <label for="selectedCategory">Filter by Category:</label>
+        <select id="selectedCategory" name="selectedCategory">
+            <option value="All Categories" selected>All Categories</option>
+            @foreach (var category in Model.ViewModel.Categories)
+            {
+                <option value="@category" >@category</option>
+            }
+        </select>
+    </div>
+
+    <!-- Date Range Filter -->
+    <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" value="@Model.ViewModel.StartDate?.ToString("yyyy-MM-dd")" />
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" value="@Model.ViewModel.EndDate?.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <div>
+        <button type="submit" formaction="/LocalEvents?handler=Search">Search</button>
+    </div>
+</form>
+
+<!-- Display Filtered Events -->
+<h2>Filtered Events</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Category</th>
+            <td>Description</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ev in Model.ViewModel.FilteredEvents)
+        {
+            <tr>
+                <td>@ev.Title</td>
+                <td>@ev.Date.ToShortDateString()</td>
+                <td>@ev.Category</td>
+                <td>@ev.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Display Recommended Events -->
+@if (Model.ViewModel.RecommendedEvents.Any())
+{
+    <h2>Recommended Events</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Category</th>
+                <td>Description</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ev in Model.ViewModel.RecommendedEvents)
+            {
+                <tr>
+                    <td>@ev.Title</td>
+                    <td>@ev.Date.ToShortDateString()</td>
+                    <td>@ev.Category</td>
+                    <td>@ev.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
