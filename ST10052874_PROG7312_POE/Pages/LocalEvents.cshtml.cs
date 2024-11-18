@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.ML;
 using ST10052874_PROG7312_POE.Models;
+
 
 namespace ST10052874_PROG7312_POE.Pages
 {
@@ -27,7 +27,6 @@ namespace ST10052874_PROG7312_POE.Pages
             _mlContext = new MLContext();
             TrainRecommendationModel();
             LoadEvents();
-            FilterEvents();
         }
 
         public void LoadEvents()
@@ -40,8 +39,6 @@ namespace ST10052874_PROG7312_POE.Pages
             ViewModel.EventsQueue.Enqueue(new Event { Title = "Painting Competition", Date = DateTime.Now.AddDays(5), Category = "Art", Description = "Taking place at Pearson, the painter who creates the best piece within 30 minutes will win R5000.", EventID = 6 });
             ViewModel.EventsQueue.Enqueue(new Event { Title = "Community Cleanup", Date = DateTime.Now.AddDays(7), Category = "Community", Description = "A cleanup of Hobie beach, starting at 8 AM.", EventID = 7 });
             ViewModel.EventsQueue.Enqueue(new Event { Title = "Potential Power outage", Date = DateTime.Now.AddDays(10), Category = "Announcement", Description = "Maintenance will be carried out on the water plant filtering system, which may result in loss of water to certain areas for 3-5 days.", EventID = 8 });
-
-
 
             while (ViewModel.EventsQueue.Count > 0)
             {
@@ -69,8 +66,8 @@ namespace ST10052874_PROG7312_POE.Pages
             ViewModel.SelectedCategory = selectedCategory;
             ViewModel.StartDate = startDate;
             ViewModel.EndDate = endDate;
-            FilterEvents();
 
+            FilterEvents();
             ShowRecommendations();
         }
 
@@ -78,8 +75,8 @@ namespace ST10052874_PROG7312_POE.Pages
         {
             var searchData = new List<SearchData>
             {
-                new SearchData { UserId = 1, EventId = 1, Label = 1 }, 
-                new SearchData { UserId = 1, EventId = 2, Label = 0 }, 
+                new SearchData { UserId = 1, EventId = 1, Label = 1 },
+                new SearchData { UserId = 1, EventId = 2, Label = 0 },
                 new SearchData { UserId = 2, EventId = 3, Label = -1 },
                 new SearchData { UserId = 2, EventId = 4, Label = -1 },
                 new SearchData { UserId = 2, EventId = 5, Label = -1 },
@@ -96,10 +93,10 @@ namespace ST10052874_PROG7312_POE.Pages
                     labelColumnName: "Label",
                     matrixColumnIndexColumnName: "UserId",
                     matrixRowIndexColumnName: "EventId",
-                    numberOfIterations: 20,       
-                    learningRate: 0.01f,          
-                    approximationRank: 100        
-                    ));
+                    numberOfIterations: 20,
+                    learningRate: 0.01f,
+                    approximationRank: 100
+                ));
 
             _model = pipeline.Fit(searchDataView);
         }
@@ -111,13 +108,11 @@ namespace ST10052874_PROG7312_POE.Pages
 
             ViewModel.RecommendedEvents = new List<Event>();
 
-            var availableEvents = ViewModel.FilteredEvents;
-
-            foreach (var eventData in availableEvents)
+            foreach (var eventData in ViewModel.EventsByDate.SelectMany(e => e.Value)) // Use all available events
             {
                 var prediction = predictionEngine.Predict(new SearchData { UserId = userId, EventId = eventData.EventID });
                 Console.WriteLine($"Event ID: {eventData.EventID}, Score: {prediction.Score}");
-                if (prediction.Score > 0.16) 
+                if (prediction.Score > 0.16)
                 {
                     ViewModel.RecommendedEvents.Add(eventData);
                 }
@@ -133,31 +128,29 @@ namespace ST10052874_PROG7312_POE.Pages
             _searchHistory.PreviousSearches.Add(new Event { Category = category });
         }
 
-        
-
         public void FilterEvents()
         {
-            var filteredEvents = ViewModel.EventsByDate
+            ViewModel.FilteredEvents = ViewModel.EventsByDate
                 .SelectMany(e => e.Value)
                 .Where(ev =>
                     (string.IsNullOrEmpty(ViewModel.SearchTerm) || ev.Title.ToLower().Contains(ViewModel.SearchTerm.ToLower())) &&
                     (string.IsNullOrEmpty(ViewModel.SelectedCategory) || ViewModel.SelectedCategory == "All Categories" || ev.Category == ViewModel.SelectedCategory) &&
-                    (!ViewModel.StartDate.HasValue || ev.Date >= ViewModel.StartDate.Value) &&  
-                    (!ViewModel.EndDate.HasValue || ev.Date <= ViewModel.EndDate.Value))        
+                    (!ViewModel.StartDate.HasValue || ev.Date >= ViewModel.StartDate.Value) &&
+                    (!ViewModel.EndDate.HasValue || ev.Date <= ViewModel.EndDate.Value))
                 .ToList();
-
-            ViewModel.FilteredEvents = filteredEvents;
         }
     }
+
     public class SearchData
     {
         public float UserId { get; set; }
         public float EventId { get; set; }
-        public float Label { get; set; } 
+        public float Label { get; set; }
     }
 
     public class EventPrediction
     {
-        public float Score { get; set; } 
+        public float Score { get; set; }
     }
 }
+

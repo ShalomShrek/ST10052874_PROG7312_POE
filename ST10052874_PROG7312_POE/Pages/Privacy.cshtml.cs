@@ -43,7 +43,8 @@ namespace ST10052874_PROG7312_POE.Pages
                 location = this.Location,
                 category = this.Category,
                 description = this.Description,
-                mediaAttachment = this.MediaAttachment 
+                mediaAttachment = this.MediaAttachment,
+                status = "Unresolved"
             }
             );
             OnGet();

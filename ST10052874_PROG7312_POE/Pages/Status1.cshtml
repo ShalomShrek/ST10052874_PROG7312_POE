@@ -1,0 +1,108 @@
+﻿@page
+@model Status1Model
+@{
+    ViewData["Title"] = "Monitor Service Requests";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="get" class="mb-3">
+    <div class="form-group">
+        <label for="filter">Filter by Status:</label>
+        <select name="filter" id="filter" class="form-control" onchange="this.form.submit()">
+            @if (string.IsNullOrEmpty(Model.CurrentFilter))
+            {
+                <option value="" selected>All</option>
+            }
+            else
+            {
+                <option value="">All</option>
+            }
+
+            @if (Model.CurrentFilter == "Resolved")
+            {
+                <option value="Resolved" selected>Resolved</option>
+            }
+            else
+            {
+                <option value="Resolved">Resolved</option>
+            }
+
+            @if (Model.CurrentFilter == "Unresolved")
+            {
+                <option value="Unresolved" selected>Unresolved</option>
+            }
+            else
+            {
+                <option value="Unresolved">Unresolved</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="sort">Sort by:</label>
+        <select name="sort" id="sort" class="form-control" onchange="this.form.submit()">
+            @if (string.IsNullOrEmpty(Model.CurrentSort))
+            {
+                <option value="" selectd>Default</option>    
+            }
+
+            @if (Model.CurrentSort == "Location")
+            {
+                <option value="Location" selected>Location</option>
+            }
+            else
+            {
+                <option value="Location">Location</option>
+            }
+
+            @if (Model.CurrentSort == "Category")
+            {
+                <option value="Category" selected>Category</option>
+            }
+            else
+            {
+                <option value="Category">Category</option>
+            }
+
+            @if (Model.CurrentSort == "Status")
+            {
+                <option value="Status" selected>Status</option>
+            }
+            else
+            {
+                <option value="Status">Status</option>
+            }
+        </select>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Location</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.DisplayedIssues.Any())
+        {
+            foreach (var issue in Model.DisplayedIssues)
+            {
+                <tr>
+                    <td>@issue.location</td>
+                    <td>@issue.category</td>
+                    <td>@issue.description</td>
+                    <td>@issue.status</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">No issues to display</td>
+            </tr>
+        }
+    </tbody>
+</table>
